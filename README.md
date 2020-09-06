@@ -1,8 +1,12 @@
-# learn-terraform
+# infrastructure
 
+Infrastructure configuration files for both research and engineering projects.
 
+## `infrastructure/terraform`
 
-## Notes
+Terraform configuration files for personal software development
+infrastructure.
 
-## References
-* **Terraform - Automate your AWS cloud infrastructure.** ([http](https://www.youtube.com/watch?v=SLB_c_ayRMo))
+Currently, the configuration defines the Google Kubernetes Engine cluster
+(and respective Node Pools) used for hosting development status software
+projects and automated machine learning model training jobs.
