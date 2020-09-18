@@ -35,7 +35,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = var.primary_node_pool
   location   = var.zone
   cluster    = google_container_cluster.dev_cluster.name
-  node_count = 1
+  node_count = 2
 
   node_config {
     preemptible   = true
@@ -119,3 +119,7 @@ resource "google_container_node_pool" "compute_preemptible_nodes" {
     }
   }
 }
+
+# Learning GCP Cloud Monitoring
+
+
