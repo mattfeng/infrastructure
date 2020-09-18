@@ -57,8 +57,17 @@ data:
 
       server {
         listen 80;
+        server_name thedevelopingdev.com www.thedevelopingdev.com;
         location / {
           proxy_pass http://hello-world.default:9000;
+        }
+      }
+
+      server {
+        listen 80;
+        server_name go.mattfeng.tech;
+        location / {
+          proxy_pass http://redirect2.default:8080;
         }
       }
     }
