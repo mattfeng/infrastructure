@@ -30,12 +30,18 @@ spec:
               containerPort: 80
               hostPort: 80
           volumeMounts:
-            - name: "config"
+            - name: config
               mountPath: "/etc/nginx"
+            - name: thedevelopingdev
+              mountPath: "/certs/thedevelopingdev.com"
+              readOnly: true
       volumes:
         - name: config
           configMap:
             name: nginx-conf
+        - name: thedevelopingdev
+          secret:
+            secretName: thedevelopingdev-certs
 
 ---
 
@@ -55,17 +61,49 @@ data:
     http {
       access_log /dev/stdout;
 
-      server {
-        listen 80;
+      server { # HTTPS for thedevelopingdev.com
+        listen 443 ssl;
         server_name thedevelopingdev.com www.thedevelopingdev.com;
+
+        ssl on;
+
+        ssl_certificate     /certs/thedevelopingdev.com/fullchain.pem;
+        ssl_certificate_key /certs/thedevelopingdev.com/privkey.pem;
+
         location / {
           proxy_pass http://hello-world.default:9000;
         }
       }
 
-      server {
+      server {  # HTTP redirect for thedevelopingdev.com
+        listen 80;
+        server_name thedevelopingdev.com www.thedevelopingdev.com;
+        return 301 https://$host$request_uri;
+      }
+      
+      # Certbot challenges (manual)
+
+      # server {
+      #   listen 80;
+      #   server_name www.thedevelopingdev.com thedevelopingdev.com;
+
+      #   location /.well-known/acme-challenge/ {
+      #     add_header Content-Type text/plain;
+
+      #     return 200 "data";
+      #   }
+
+      #   location /.well-known/acme-challenge/ {
+
+      #     add_header Content-Type text/plain;
+      #     return 200 "data";
+      #   }
+      # }
+
+      server {  # go.mattfeng.tech
         listen 80;
         server_name go.mattfeng.tech;
+
         location / {
           proxy_pass http://redirect2.default:8080;
         }
