@@ -35,6 +35,9 @@ spec:
             - name: thedevelopingdev
               mountPath: "/certs/thedevelopingdev.com"
               readOnly: true
+            - name: redirect2
+              mountPath: "/certs/go.mattfeng.tech"
+              readOnly: true
       volumes:
         - name: config
           configMap:
@@ -42,6 +45,9 @@ spec:
         - name: thedevelopingdev
           secret:
             secretName: thedevelopingdev-certs
+        - name: redirect2
+          secret:
+            secretName: redirect2-certs
 
 ---
 
@@ -100,13 +106,36 @@ data:
       #   }
       # }
 
-      server {  # go.mattfeng.tech
-        listen 80;
+      server {
+        listen 443 ssl;
         server_name go.mattfeng.tech;
+
+        ssl on;
+
+        ssl_certificate     /certs/go.mattfeng.tech/fullchain.pem;
+        ssl_certificate_key /certs/go.mattfeng.tech/privkey.pem;
 
         location / {
           proxy_pass http://redirect2.default:8080;
         }
       }
+
+      server {  # go.mattfeng.tech
+        listen 80;
+        server_name go.mattfeng.tech;
+        return 301 https://$host$request_uri;
+      }
+
+      # Certbot challenges for go.mattfeng.tech
+      # server {
+      #   listen 80;
+      #   server_name go.mattfeng.tech;
+
+      #   location /.well-known/acme-challenge/ {
+      #     add_header Content-Type text/plain;
+      #     return 200 "data";
+      #   }
+      # }
+
     }
 
