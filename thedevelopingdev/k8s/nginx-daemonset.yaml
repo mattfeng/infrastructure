@@ -77,7 +77,7 @@ data:
         ssl_certificate_key /certs/thedevelopingdev.com/privkey.pem;
 
         location / {
-          proxy_pass http://hello-world.default:9000;
+          proxy_pass http://tdd-website.default:3000;
         }
       }
 
