@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gcloud-run-script
+spec:
+  template:
+    metadata:
+      labels:
+        app: set-static-ip
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: main
+          image: thedevelopingdev/gcloud:0.1.0
+
+          command: ["/scripts/set-static-ip.sh"]
+
+          volumeMounts:
+            # credentials
+            - name: gcloud-key
+              mountPath: /var/secrets/google
+
+            # script to run
+            - name: script
+              mountPath: /scripts
+
+          env:
+            # credentials
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secrets/google/gcloud-static-ip-tdd.json
+
+            # variables used by script
+            - name: PREFIX
+              value: gitlab
+            - name: ZONE
+              value: us-central1-c
+            - name: ADDRESS
+              value: 35.209.205.187
+
+      volumes:
+        - name: gcloud-key
+          secret:
+            secretName: static-ip-key
+        - name: script
+          configMap:
+            name: static-ip-script
+            defaultMode: 0777

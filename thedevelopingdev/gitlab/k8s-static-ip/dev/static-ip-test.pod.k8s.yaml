@@ -1,8 +1,5 @@
-# kind: CronJob
-#
-#
+# using a Pod to test permissions
 
-# Pod test
 apiVersion: v1
 kind: Pod
 metadata:
@@ -11,10 +8,6 @@ spec:
   containers:
     - name: main
       image: thedevelopingdev/gcloud:0.1.0
-      # command:
-      #   - gcloud
-      # args:
-      #   - 
       volumeMounts:
         - name: gcloud-key
           mountPath: /var/secrets/google
@@ -25,4 +18,3 @@ spec:
     - name: gcloud-key
       secret:
         secretName: static-ip-key
-
