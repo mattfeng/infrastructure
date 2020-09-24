@@ -1,0 +1,28 @@
+# kind: CronJob
+#
+#
+
+# Pod test
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gcloud-test
+spec:
+  containers:
+    - name: main
+      image: thedevelopingdev/gcloud:0.1.0
+      # command:
+      #   - gcloud
+      # args:
+      #   - 
+      volumeMounts:
+        - name: gcloud-key
+          mountPath: /var/secrets/google
+      env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/gcloud-static-ip-tdd.json
+  volumes:
+    - name: gcloud-key
+      secret:
+        secretName: static-ip-key
+
