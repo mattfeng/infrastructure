@@ -35,6 +35,12 @@ spec:
             - name: thedevelopingdev
               mountPath: "/certs/thedevelopingdev.com"
               readOnly: true
+            - name: proxy
+              mountPath: "/certs/proxy.thedevelopingdev.com"
+              readOnly: true
+            - name: proxy2
+              mountPath: "/certs/proxy2.thedevelopingdev.com"
+              readOnly: true
             - name: redirect2
               mountPath: "/certs/go.mattfeng.tech"
               readOnly: true
@@ -45,6 +51,12 @@ spec:
         - name: thedevelopingdev
           secret:
             secretName: thedevelopingdev-certs
+        - name: proxy
+          secret:
+            secretName: proxy-certs
+        - name: proxy2
+          secret:
+            secretName: proxy2-certs
         - name: redirect2
           secret:
             secretName: redirect2-certs
@@ -67,6 +79,54 @@ data:
     http {
       access_log /dev/stdout;
 
+      server {
+        listen 443 ssl;
+        server_name proxy.thedevelopingdev.com;
+        resolver 8.8.8.8;
+
+        ssl on;
+
+        ssl_certificate     /certs/proxy.thedevelopingdev.com/fullchain.pem;
+        ssl_certificate_key /certs/proxy.thedevelopingdev.com/privkey.pem;
+
+        location / {
+          proxy_set_header Host www.googletagmanager.com;
+          proxy_pass https://www.googletagmanager.com$request_uri;
+        }
+      }
+
+      server {
+        listen 443 ssl;
+        server_name proxy2.thedevelopingdev.com;
+        resolver 8.8.8.8;
+
+        ssl on;
+
+        ssl_certificate     /certs/proxy2.thedevelopingdev.com/fullchain.pem;
+        ssl_certificate_key /certs/proxy2.thedevelopingdev.com/privkey.pem;
+
+        location /j/duiovn {
+          proxy_set_header Host www.google-analytics.com;
+          proxy_pass https://www.google-analytics.com/j/collect;
+        }
+
+        location /duiovn {
+          proxy_set_header Host www.google-analytics.com;
+          proxy_pass https://www.google-analytics.com/collect;
+        }
+
+        location / {
+          proxy_set_header Host www.google-analytics.com;
+          proxy_pass https://www.google-analytics.com$request_uri;
+        }
+      }
+
+      server {  # HTTP redirect for proxy.thedevelopingdev.com
+        listen 80;
+        server_name proxy.thedevelopingdev.com proxy2.thedevelopingdev.com;
+        return 301 https://$host$request_uri;
+      }
+
       server { # HTTPS for thedevelopingdev.com
         listen 443 ssl;
         server_name thedevelopingdev.com www.thedevelopingdev.com;
@@ -86,7 +146,7 @@ data:
         server_name thedevelopingdev.com www.thedevelopingdev.com;
         return 301 https://$host$request_uri;
       }
-      
+
       # Certbot challenges (manual)
 
       # server {
@@ -103,6 +163,28 @@ data:
 
       #     add_header Content-Type text/plain;
       #     return 200 "data";
+      #   }
+      # }
+
+      # server {
+      #   listen 80;
+      #   server_name proxy.thedevelopingdev.com;
+
+      #   location /.well-known/acme-challenge/ {
+      #     add_header Content-Type text/plain;
+
+      #     return 200 "ok";
+      #   }
+      # }
+
+      # server {
+      #   listen 80;
+      #   server_name proxy2.thedevelopingdev.com;
+
+      #   location /.well-known/acme-challenge/ {
+      #     add_header Content-Type text/plain;
+
+      #     return 200 "ok";
       #   }
       # }
 
