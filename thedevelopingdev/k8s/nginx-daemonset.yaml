@@ -107,11 +107,17 @@ data:
 
         location /j/duiovn {
           proxy_set_header Host www.google-analytics.com;
+
+          set $args $args&uip=$remote_addr;
+
           proxy_pass https://www.google-analytics.com/j/collect;
         }
 
         location /duiovn {
           proxy_set_header Host www.google-analytics.com;
+
+          set $args $args&uip=$remote_addr;
+
           proxy_pass https://www.google-analytics.com/collect;
         }
 
