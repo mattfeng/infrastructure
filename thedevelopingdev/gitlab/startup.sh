@@ -35,7 +35,7 @@ if test -f /backup/gitlab-data/dump_gitlab_backup.tar; then
 
   if test -e /backup/gitlab-config; then
     # restore the secrets
-    cp -a /backup/gitlab-config /srv/gitlab
+    cp -aT /backup/gitlab-config /srv/gitlab/config
   fi
 
   # restart the GitLab container

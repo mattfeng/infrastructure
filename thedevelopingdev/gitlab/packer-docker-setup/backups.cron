@@ -1,2 +1,2 @@
 0,30 * * * * docker exec -t root_web_1 gitlab-backup create BACKUP=dump
-0,30 * * * * cp -a /srv/gitlab/config /backup/gitlab-config
+0,30 * * * * cp -aT /srv/gitlab/config /backup/gitlab-config

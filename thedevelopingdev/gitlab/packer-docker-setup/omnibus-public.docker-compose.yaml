@@ -1,0 +1,28 @@
+web:
+  image: 'gitlab/gitlab-ce:13.4.1-ce.0'
+  restart: always
+  hostname: 'git.thedevelopingdev.com'
+  environment:
+    GITLAB_OMNIBUS_CONFIG: |
+      external_url 'https://git.thedevelopingdev.com'
+
+      letsencrypt['enabled'] = false
+
+      gitlab_rails['smtp_enable'] = true
+      gitlab_rails['smtp_address'] = "email-smtp.us-east-2.amazonaws.com"
+      gitlab_rails['smtp_port'] = 587
+      gitlab_rails['smtp_user_name'] = ""
+      gitlab_rails['smtp_password'] = "+"
+      gitlab_rails['smtp_domain'] = "thedevelopingdev.com"
+      gitlab_rails['smtp_authentication'] = "login"
+      gitlab_rails['smtp_enable_starttls_auto'] = true
+
+  ports:
+    - '80:80'
+    - '443:443'
+    - '8022:22'
+  volumes:
+    - '/srv/gitlab/config:/etc/gitlab'
+    - '/srv/gitlab/logs:/var/log/gitlab'
+    - '/srv/gitlab/data:/var/opt/gitlab'
+    - '/backup/gitlab-data:/var/opt/gitlab/backups'
