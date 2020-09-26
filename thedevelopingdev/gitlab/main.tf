@@ -35,6 +35,13 @@ data "google_compute_image" "gitlab_disk_image" {
   project = "thedevelopingdev"
 }
 
+resource "google_compute_disk" "backup_disk" {
+  name    = "gitlab-backup-disk"
+  type    = "pd-standard"
+  zone    = "us-central1-c"
+  size    = 50
+}
+
 resource "google_compute_instance_template" "gitlab_it" {
   name_prefix = "gitlab-it-"
   description = "Used to create Gitlab instances."
@@ -52,9 +59,9 @@ resource "google_compute_instance_template" "gitlab_it" {
 
   // persistent disk
   disk {
+    source       = google_compute_disk.backup_disk.name
     auto_delete  = false
     boot         = false
-    disk_size_gb = 50
   }
 
   // networking :: no external IP

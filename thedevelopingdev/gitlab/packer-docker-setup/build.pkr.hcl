@@ -4,7 +4,7 @@ variable "account_key" {
 }
 
 source "googlecompute" "docker" {
-  account_file = var.account_key
+  account_file = file(var.account_key)
   project_id   = "thedevelopingdev"
   source_image = "debian-10-buster-v20200910"
   ssh_username = "packer"
@@ -37,9 +37,15 @@ build {
     destination = "/tmp/docker-compose.yml"
   }
 
+  provisioner "file" {
+    source = "backups.cron"
+    destination = "/tmp/backups.cron"
+  }
+
   provisioner "shell" {
     inline = [
-      "sudo cp /tmp/docker-compose.yml /root/docker-compose.yml"
+      "sudo cp /tmp/docker-compose.yml /root/docker-compose.yml",
+      "sudo cp /tmp/backups.cron /backups.cron"
     ]
   }
 }

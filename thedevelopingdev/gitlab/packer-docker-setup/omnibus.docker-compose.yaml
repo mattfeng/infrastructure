@@ -1,11 +1,12 @@
 web:
   image: 'gitlab/gitlab-ce:13.4.1-ce.0'
   restart: always
-  hostname: 'gitlab.thedevelopingdev.com'
+  hostname: 'git.thedevelopingdev.com'
   environment:
     GITLAB_OMNIBUS_CONFIG: |
-      external_url 'https://gitlab.thedevelopingdev.com'
-      # Add any other gitlab.rb configuration here, each on its own line
+      external_url 'https://git.thedevelopingdev.com'
+
+      # letsencrypt['enabled'] = false
   ports:
     - '80:80'
     - '443:443'
@@ -14,3 +15,4 @@ web:
     - '/srv/gitlab/config:/etc/gitlab'
     - '/srv/gitlab/logs:/var/log/gitlab'
     - '/srv/gitlab/data:/var/opt/gitlab'
+    - '/backup/gitlab-data:/var/opt/gitlab/backups'
