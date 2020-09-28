@@ -11,7 +11,8 @@ resource "google_container_node_pool" "worker" {
 
   node_config {
     preemptible  = true
-    machine_type = "n1-standard-2"
+    machine_type = "n2d-standard-2"
+    disk_size_gb = 50
 
     labels = {
       node_pool = var.nodepools.worker
@@ -19,7 +20,7 @@ resource "google_container_node_pool" "worker" {
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/devstorage.read_write",
       "https://www.googleapis.com/auth/compute",
       "https://www.googleapis.com/auth/monitoring"
     ]
@@ -44,7 +45,7 @@ resource "google_container_node_pool" "ingress" {
   node_config {
     preemptible   = true
     machine_type  = "e2-micro"
-    disk_size_gb  = 20
+    disk_size_gb  = 10
 
     taint = [
       {
@@ -86,6 +87,7 @@ resource "google_container_node_pool" "compute" {
   node_config {
     preemptible   = true
     machine_type  = "n1-standard-8"
+    disk_size_gb  = 20
 
     guest_accelerator {
       type = "nvidia-tesla-k80"      # 16 GB memory

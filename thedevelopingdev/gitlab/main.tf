@@ -39,20 +39,21 @@ resource "google_compute_disk" "backup_disk" {
   name    = "gitlab-backup-disk"
   type    = "pd-standard"
   zone    = "us-central1-c"
-  size    = 50
+  size    = 10
 }
 
 resource "google_compute_instance_template" "gitlab_it" {
   name_prefix = "gitlab-it-"
   description = "Used to create Gitlab instances."
 
-  machine_type = "n2d-standard-2"
+  machine_type = "custom-1-4096"
 
   tags = ["gitlab"]
 
   // boot disk
   disk {
     source_image = data.google_compute_image.gitlab_disk_image.self_link
+    disk_size_gb = 20
     auto_delete  = true
     boot         = true
   }
