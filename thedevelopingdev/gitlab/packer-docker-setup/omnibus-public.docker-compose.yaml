@@ -6,7 +6,7 @@ web:
     GITLAB_OMNIBUS_CONFIG: |
       external_url 'https://git.thedevelopingdev.com'
 
-      letsencrypt['enabled'] = false
+      letsencrypt['enable'] = false
 
       gitlab_rails['smtp_enable'] = true
       gitlab_rails['smtp_address'] = "email-smtp.us-east-2.amazonaws.com"
