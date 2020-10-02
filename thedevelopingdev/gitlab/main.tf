@@ -46,7 +46,7 @@ resource "google_compute_instance_template" "gitlab_it" {
   name_prefix = "gitlab-it-"
   description = "Used to create Gitlab instances."
 
-  machine_type = "custom-1-4096"
+  machine_type = "custom-1-6144"
 
   tags = ["gitlab"]
 

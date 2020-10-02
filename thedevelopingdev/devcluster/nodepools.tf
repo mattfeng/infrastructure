@@ -11,7 +11,7 @@ resource "google_container_node_pool" "worker" {
 
   node_config {
     preemptible  = true
-    machine_type = "e2-custom-4-6144"
+    machine_type = "e2-custom-2-6144"
     disk_size_gb = 25
 
     labels = {
