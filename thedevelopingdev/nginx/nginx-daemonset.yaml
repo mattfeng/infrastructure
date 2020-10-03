@@ -44,6 +44,9 @@ spec:
             - name: redirect2
               mountPath: "/certs/go.mattfeng.tech"
               readOnly: true
+            - name: intern
+              mountPath: "/certs/intern.mattfeng.tech"
+              readOnly: true
       volumes:
         - name: config
           configMap:
@@ -60,6 +63,9 @@ spec:
         - name: redirect2
           secret:
             secretName: redirect2-certs
+        - name: intern
+          secret:
+            secretName: intern-certs
 
 ---
 
@@ -79,21 +85,10 @@ data:
     http {
       access_log /dev/stdout;
 
-      server {  # HTTP redirect for proxy.thedevelopingdev.com
-        listen 80;
-        server_name intern.thedevelopingdev.com;
-
-        location / {
-          proxy_pass http://internship-frontend:3000;
-        }
-      }
-
       server {
         listen 443 ssl;
         server_name proxy.thedevelopingdev.com;
         resolver 8.8.8.8;
-
-        ssl on;
 
         ssl_certificate     /certs/proxy.thedevelopingdev.com/fullchain.pem;
         ssl_certificate_key /certs/proxy.thedevelopingdev.com/privkey.pem;
@@ -108,8 +103,6 @@ data:
         listen 443 ssl;
         server_name proxy2.thedevelopingdev.com;
         resolver 8.8.8.8;
-
-        ssl on;
 
         ssl_certificate     /certs/proxy2.thedevelopingdev.com/fullchain.pem;
         ssl_certificate_key /certs/proxy2.thedevelopingdev.com/privkey.pem;
@@ -145,8 +138,6 @@ data:
       server { # HTTPS for thedevelopingdev.com
         listen 443 ssl;
         server_name thedevelopingdev.com www.thedevelopingdev.com;
-
-        ssl on;
 
         ssl_certificate     /certs/thedevelopingdev.com/fullchain.pem;
         ssl_certificate_key /certs/thedevelopingdev.com/privkey.pem;
@@ -207,8 +198,6 @@ data:
         listen 443 ssl;
         server_name go.mattfeng.tech;
 
-        ssl on;
-
         ssl_certificate     /certs/go.mattfeng.tech/fullchain.pem;
         ssl_certificate_key /certs/go.mattfeng.tech/privkey.pem;
 
@@ -233,6 +222,25 @@ data:
       #     return 200 "data";
       #   }
       # }
+
+      server {
+        listen 443 ssl;
+        server_name intern.thedevelopingdev.com;
+
+        ssl_certificate     /certs/intern.mattfeng.tech/fullchain.pem;
+        ssl_certificate_key /certs/intern.mattfeng.tech/privkey.pem;
+
+        location / {
+          proxy_pass http://internship-frontend.default:3000;
+        }
+      }
+
+      server {  # HTTP redirect for intern.thedevelopingdev.com
+        listen 80;
+        server_name intern.thedevelopingdev.com;
+        return 301 https://$host$request_uri;
+
+      }
 
     }
 
