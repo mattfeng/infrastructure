@@ -79,6 +79,15 @@ data:
     http {
       access_log /dev/stdout;
 
+      server {  # HTTP redirect for proxy.thedevelopingdev.com
+        listen 80;
+        server_name intern.thedevelopingdev.com;
+
+        location / {
+          proxy_pass http://internship-frontend:3000;
+        }
+      }
+
       server {
         listen 443 ssl;
         server_name proxy.thedevelopingdev.com;
